@@ -37,6 +37,7 @@ get_memcached(void *server_list)
 	if (!mc)
 	{
 		mc = memcached_create(NULL);
+		memcached_behavior_set(mc, MEMCACHED_BEHAVIOR_DISTRIBUTION , MEMCACHED_DISTRIBUTION_CONSISTENT );
 		memcached_server_push(mc, (memcached_server_st *)server_list);
 		pthread_setspecific(thread_key, mc);
 	}
