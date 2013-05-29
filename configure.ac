@@ -66,8 +66,8 @@ if test "x$VMODDIR" = x; then
 fi
 
 # Look for libmemcached using pkg-config
-PKG_CHECK_MODULES([LIBMEMCACHED], [libmemcached])
-AC_SEARCH_LIBS([memcached], [memcached], [ AC_DEFINE([HAVE_MEMCACHED], [], [Description]) ])
+PKG_CHECK_MODULES([LIBMEMCACHED], [libmemcached >= 0.50])
+AC_SEARCH_LIBS([memcached], [memcached] )
 
 AC_CONFIG_FILES([
 	Makefile

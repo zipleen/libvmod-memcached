@@ -1,8 +1,5 @@
 #include <stdlib.h>
 #include <libmemcached/memcached.h>
-#ifdef HAVE_CONFIG_H
-#include "../config.h"
-#endif
 
 #include "vrt.h"
 #include "bin/varnishd/cache.h"
@@ -39,8 +36,7 @@ get_memcached(void *server_list)
 	memcached_st *mc = pthread_getspecific(thread_key);
 	if (!mc)
 	{
-		mc = memcached_create(NULL);
-		memcached_server_push(mc, (memcached_server_st *)server_list);
+		mc = memcached(server_list, strlen(server_list));
 		pthread_setspecific(thread_key, mc);
 	}
 	return mc;
@@ -60,28 +56,9 @@ init_function(struct vmod_priv *priv, const struct VCL_conf *conf)
 /** The following may ONLY be called from VCL_init **/
 
 void
-vmod_servers(struct sess *sp, struct vmod_priv *priv, const char *servers)
-{
-	priv->priv = memcached_servers_parse(servers);
-}
-
-void
 vmod_config(struct sess *sp, struct vmod_priv *priv, const char *config)
 {
-#ifdef HAVE_MEMCACHED
-	priv->priv = memcached(config, strlen(config));
-#endif
-}
-
-unsigned
-vmod_checkconfig(struct sess *sp, struct vmod_priv *priv, const char *config)
-{
-#ifdef HAVE_MEMCACHED
-        char memcache_error_buffer[50];
-        memcached_return_t test_config = libmemcached_check_configuration(config, strlen(config), memcache_error_buffer, sizeof(memcache_error_buffer));
-        return memcached_success(test_config);
-#endif
-	return false;
+	priv->priv = (char*)config;
 }
 
 /** The following may be called after 'memcached.servers(...)' **/
