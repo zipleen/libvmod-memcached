@@ -3,7 +3,7 @@ AC_COPYRIGHT([Copyright (c) 2012 Aaron Stone])
 AC_INIT([libvmod-memcached], [trunk])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_SRCDIR(src/vmod_memcached.vcc)
-AM_CONFIG_HEADER(config.h)
+AC_CONFIG_HEADERS(config.h)
 
 AC_CANONICAL_SYSTEM
 AC_LANG(C)
@@ -67,6 +67,7 @@ fi
 
 # Look for libmemcached using pkg-config
 PKG_CHECK_MODULES([LIBMEMCACHED], [libmemcached])
+AC_SEARCH_LIBS([memcached], [memcached], [ AC_DEFINE([HAVE_MEMCACHED], [], [Description]) ])
 
 AC_CONFIG_FILES([
 	Makefile

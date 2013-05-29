@@ -1,5 +1,8 @@
 #include <stdlib.h>
 #include <libmemcached/memcached.h>
+#ifdef HAVE_CONFIG_H
+#include "../config.h"
+#endif
 
 #include "vrt.h"
 #include "bin/varnishd/cache.h"
@@ -37,7 +40,6 @@ get_memcached(void *server_list)
 	if (!mc)
 	{
 		mc = memcached_create(NULL);
-		memcached_behavior_set(mc, MEMCACHED_BEHAVIOR_DISTRIBUTION , MEMCACHED_DISTRIBUTION_CONSISTENT );
 		memcached_server_push(mc, (memcached_server_st *)server_list);
 		pthread_setspecific(thread_key, mc);
 	}
@@ -63,14 +65,24 @@ vmod_servers(struct sess *sp, struct vmod_priv *priv, const char *servers)
 	priv->priv = memcached_servers_parse(servers);
 }
 
-/* libmemcached 0.49+ is a long way out from most distros, oh well!
 void
 vmod_config(struct sess *sp, struct vmod_priv *priv, const char *config)
 {
+#ifdef HAVE_MEMCACHED
 	priv->priv = memcached(config, strlen(config));
+#endif
 }
-*/
 
+unsigned
+vmod_checkconfig(struct sess *sp, struct vmod_priv *priv, const char *config)
+{
+#ifdef HAVE_MEMCACHED
+        char memcache_error_buffer[50];
+        memcached_return_t test_config = libmemcached_check_configuration(config, strlen(config), memcache_error_buffer, sizeof(memcache_error_buffer));
+        return memcached_success(test_config);
+#endif
+	return false;
+}
 
 /** The following may be called after 'memcached.servers(...)' **/
 
