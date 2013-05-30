@@ -33,10 +33,22 @@ make_key()
 memcached_st *
 get_memcached(void *server_list)
 {
+	memcached_return status;
 	memcached_st *mc = pthread_getspecific(thread_key);
 	if (!mc)
 	{
-		mc = memcached(server_list, strlen(server_list));
+#if defined(LIBMEMCACHED_VERSION_HEX) && LIBMEMCACHED_VERSION_HEX > 0x00049000
+		if (strstr(server_list, "--SERVER")) { 
+			mc = memcached(server_list, strlen(server_list));
+		} else {
+#endif
+			memcached_server_st *servers = memcached_servers_parse(server_list);
+			mc = memcached_create(NULL);
+			memcached_server_push(mc, (memcached_server_st *)servers);
+			memcached_server_list_free(servers);
+#if defined(LIBMEMCACHED_VERSION_HEX) && LIBMEMCACHED_VERSION_HEX > 0x00049000			
+		}
+#endif
 		pthread_setspecific(thread_key, mc);
 	}
 	return mc;
@@ -56,7 +68,7 @@ init_function(struct vmod_priv *priv, const struct VCL_conf *conf)
 /** The following may ONLY be called from VCL_init **/
 
 void
-vmod_config(struct sess *sp, struct vmod_priv *priv, const char *config)
+vmod_servers(struct sess *sp, struct vmod_priv *priv, const char *config)
 {
 	priv->priv = (char*)config;
 }

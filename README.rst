@@ -26,24 +26,27 @@ Implements the basic memcached operations of get, set, incr, decr.
 FUNCTIONS
 =========
 
-config
-------
+servers
+-------
 
 Prototype
         ::
 
-                config(STRING servers)
+                servers(STRING servers)
 Return value
 	NONE
 Description
-	Set the list of memcached servers (and their options) available for requests handled by this VCL.
-	The syntax is specified in "http://docs.libmemcached.org/libmemcached_configuration.html#description".
-	To specify a server, use "--SERVER=ip:port".
+	Set the list of memcached servers available for requests handled by this VCL. The syntax is a whitespace or comma 
+        separated list of one or more "hostname[:port]" items.
+
+        If you have libmemcached > 0.49 you can use the new syntax, specified in 
+        http://docs.libmemcached.org/libmemcached_configuration.html#description , which uses "--SERVER=ip:port"
+        to specify a server.
 Example
         ::
+                memcached.servers("localhost,anotherhost:12345");
 
-                memcached.config("--SERVER=localhost --SERVER=anotherhost:12345");
-		memcached.config("--SERVER=ip:port --SERVER=ip2:port2 --DISTRIBUTION=MEMCACHED_DISTRIBUTION_CONSISTENT");
+                memcached.servers("--SERVER=localhost --SERVER=anotherhost:12345");
 
 get
 ---
