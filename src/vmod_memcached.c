@@ -33,7 +33,6 @@ make_key()
 memcached_st *
 get_memcached(void *server_list)
 {
-	memcached_return status;
 	memcached_st *mc = pthread_getspecific(thread_key);
 	if (!mc)
 	{
