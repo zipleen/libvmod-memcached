@@ -42,6 +42,8 @@ Description
         If you have libmemcached > 0.49 you can use the new syntax, specified in 
         http://docs.libmemcached.org/libmemcached_configuration.html#description , which uses "--SERVER=ip:port"
         to specify a server.
+        Warning: There is no error checking for this string, if it's wrong you won't get an error but memcached
+        won't work as well. Check first if the connection string is valid.
 Example
         ::
 
