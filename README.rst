@@ -45,8 +45,14 @@ Description
 Example
         ::
                 memcached.servers("localhost,anotherhost:12345");
-
+        ::
                 memcached.servers("--SERVER=localhost --SERVER=anotherhost:12345");
+        ::
+                // with consistent hashing enabled
+                memcached.servers("--SERVER=localhost --SERVER=anotherhost:12345 --DISTRIBUTION=consistent");
+        ::
+                // with consistent hashing enabled and namespace
+                memcached.servers({"--SERVER=web1.gloople:11211 --SERVER=web2.gloople:11211 --DISTRIBUTION=consistent --NAMESPACE="memc.sess.key.""});
 
 get
 ---
